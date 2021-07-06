@@ -1,3 +1,4 @@
+from copy import Error
 from django.shortcuts import render
 
 from django.http.response import JsonResponse
@@ -8,7 +9,6 @@ from dsvn_dictionary.models import DsvnDictionary, Vi_Dictionary
 from dsvn_dictionary.serializers import DsvnDictionarySerializer
 from dsvn_dictionary.serializers import Vi_DictionarySerializer
 from rest_framework.decorators import api_view
-# from dsvn_dictionary.models import Word
 
 @api_view(['GET', 'POST', 'DELETE'])
 def tutorial_list(request):
@@ -93,5 +93,37 @@ def vidictionary_list(request):
     elif request.method == 'DELETE':
         count = Vi_Dictionary.objects.all().delete()
         return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
- 
 
+@api_view(['GET', 'POST', 'DELETE'])
+def vidictionary_search(request):
+    if request.method == 'GET':
+        title_name=request.GET['vi_text']
+        # if title_name is not None:
+        #     return JsonResponse(Error("please enter key search"), status=status.HTTP_400_BAD_REQUEST)
+
+        tutorials = Vi_Dictionary.objects.raw("SELECT id, vi_text FROM dsvn_dictionary_vi_dictionary WHERE vi_text=%s",[title_name])
+        tutorials_serializer = Vi_DictionarySerializer(tutorials, many=True)
+        
+        return JsonResponse(tutorials_serializer.data, safe=False)
+
+    if request.method == 'DELETE':
+        title_name = request.GET['vi_text']
+        Vi_Dictionary.objects.filter(vi_text = title_name).delete()
+        return JsonResponse({'message': 'Tutorials were deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET', 'POST', 'DELETE', 'PUT'])
+def vidictionary_update(request, pk):
+
+    try: 
+        tutorial = Vi_Dictionary.objects.get(id=pk) 
+    except Vi_Dictionary.DoesNotExist: 
+        return JsonResponse({'message': 'The vi dictionary does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+ 
+    if request.method == 'PUT': 
+        tutorial_data = JSONParser().parse(request) 
+        tutorial_serializer = Vi_DictionarySerializer(tutorial, data=tutorial_data) 
+        if tutorial_serializer.is_valid(): 
+            tutorial_serializer.save() 
+            return JsonResponse(tutorial_serializer.data) 
+        return JsonResponse(tutorial_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+ 
