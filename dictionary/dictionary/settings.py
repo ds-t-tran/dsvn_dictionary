@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-*rjf6halmxnzc$95z)w$p7d3vu(v@#t3k)8kr3!^72mkda&aua'
+SECRET_KEY = 'django-insecure-48*h%s=d-91o1av-#mcpz+4)qnck@+=8$bwjx6ac!4axn8(np*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,9 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Django REST framework 
     'rest_framework',
-    # Tutorials application 
-    'tutorials.apps.TutorialsConfig',
-     # CORS
+    'dsvn_dictionary.apps.DsvnDictionaryConfig',
+    # CORS
     'corsheaders',
 ]
 
@@ -90,7 +89,7 @@ WSGI_APPLICATION = 'dictionary.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dsvn_dictionary',
+        'NAME': 'dictionary_db',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': '127.0.0.1',
