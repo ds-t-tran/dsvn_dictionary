@@ -106,11 +106,6 @@ def vidictionary_search(request):
         
         return JsonResponse(tutorials_serializer.data, safe=False)
 
-    if request.method == 'DELETE':
-        title_name = request.GET['vi_text']
-        Vi_Dictionary.objects.filter(vi_text = title_name).delete()
-        return JsonResponse({'message': 'Tutorials were deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
-
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
 def vidictionary_update(request, pk):
 
@@ -126,4 +121,21 @@ def vidictionary_update(request, pk):
             tutorial_serializer.save() 
             return JsonResponse(tutorial_serializer.data) 
         return JsonResponse(tutorial_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
- 
+
+@api_view(['GET', 'POST', 'DELETE'])
+def vidictionary_delete(request, pk):
+
+    try: 
+        vi_dic = Vi_Dictionary.objects.get(pk=pk) 
+    except Vi_Dictionary.DoesNotExist: 
+        return JsonResponse({'message': 'The vi dictionary does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+
+    if request.method == 'DELETE': 
+        vi_dic.delete() 
+        return JsonResponse({'message': 'Tutorial was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)    
+
+    # if request.method == 'DELETE':
+    #     title_name = request.GET['vi_text']
+    #     Vi_Dictionary.objects.filter(vi_text = title_name).delete()
+    #     return JsonResponse({'message': 'Tutorials were deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+

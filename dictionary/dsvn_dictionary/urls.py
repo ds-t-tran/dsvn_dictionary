@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^api/vidictionary$', views.vidictionary_list),
     url(r'^api/search/vidictionary$', views.vidictionary_search),
     url(r'^api/update/vidictionary/(?P<pk>[0-9]+)$', views.vidictionary_update),
+    url(r'^api/delete/vidictionary/(?P<pk>[0-9]+)$', views.vidictionary_delete),
 ]
