@@ -21,3 +21,17 @@ class Vi_Dictionary(models.Model):
     
     def __str__(self):
         return self.vi_text
+
+class Ja_Dictionary(models.Model):
+    hiragana_text = models.CharField(max_length=200, blank=True, default='')
+    kanji_text = models.CharField(max_length=200, blank=True, default='')
+    katakana_text = models.CharField(max_length=200, blank=True, default='')
+    vi_text = models.CharField(max_length=200, blank=True, default='')
+    description = models.CharField(max_length=200, blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.hiragana_text
+    
+
