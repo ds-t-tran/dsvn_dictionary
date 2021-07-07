@@ -1,13 +1,13 @@
-from copy import Error
 from django.shortcuts import render
 
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
  
-from dsvn_dictionary.models import DsvnDictionary, Vi_Dictionary
+from dsvn_dictionary.models import DsvnDictionary, Vi_Dictionary, Ja_Dictionary
 from dsvn_dictionary.serializers import DsvnDictionarySerializer
 from dsvn_dictionary.serializers import Vi_DictionarySerializer
+from dsvn_dictionary.serializers import Ja_DictionarySerializer
 from rest_framework.decorators import api_view
 
 @api_view(['GET', 'POST', 'DELETE'])
@@ -71,6 +71,8 @@ def tutorial_list_published(request):
     
 @api_view(['GET', 'POST', 'DELETE'])
 def vidictionary_list(request):
+
+    # function get all list of vi-dictionary
     if request.method == 'GET':
         tutorials = Vi_Dictionary.objects.all()
         
@@ -82,6 +84,7 @@ def vidictionary_list(request):
         return JsonResponse(tutorials_serializer.data, safe=False)
         # 'safe=False' for objects serialization
  
+    # function add to vi-dictionary
     elif request.method == 'POST':
         vidic_data = JSONParser().parse(request)
         vidic_serializer = Vi_DictionarySerializer(data=vidic_data)
@@ -90,10 +93,12 @@ def vidictionary_list(request):
             return JsonResponse(vidic_serializer.data, status=status.HTTP_201_CREATED) 
         return JsonResponse(vidic_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    # function delete all list of vi-dictionary
     elif request.method == 'DELETE':
         count = Vi_Dictionary.objects.all().delete()
         return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
 
+# function search by vi to ja
 @api_view(['GET', 'POST', 'DELETE'])
 def vidictionary_search(request):
     if request.method == 'GET':
@@ -106,6 +111,7 @@ def vidictionary_search(request):
         
         return JsonResponse(tutorials_serializer.data, safe=False)
 
+# function update vi-dic by id
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
 def vidictionary_update(request, pk):
 
@@ -122,6 +128,7 @@ def vidictionary_update(request, pk):
             return JsonResponse(tutorial_serializer.data) 
         return JsonResponse(tutorial_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
+# function delete vi-dic by id
 @api_view(['GET', 'POST', 'DELETE'])
 def vidictionary_delete(request, pk):
 
@@ -139,3 +146,75 @@ def vidictionary_delete(request, pk):
     #     Vi_Dictionary.objects.filter(vi_text = title_name).delete()
     #     return JsonResponse({'message': 'Tutorials were deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 
+
+@api_view(['GET', 'POST', 'DELETE'])
+def jadictionary_list(request):
+
+    # function get all list of ja-dictionary
+    if request.method == 'GET':
+        ja_dic = Ja_Dictionary.objects.all()
+        
+        hiragana_text = request.GET.get('hiragana_text', None)
+        if hiragana_text is not None:
+            ja_dic = ja_dic.filter(title__icontains=hiragana_text)
+        
+        ja_serializer = Ja_DictionarySerializer(ja_dic, many=True)
+        return JsonResponse(ja_serializer.data, safe=False)
+        # 'safe=False' for objects serialization
+ 
+    # function add to ja-dictionary
+    elif request.method == 'POST':
+        jadic_data = JSONParser().parse(request)
+        jadic_serializer = Ja_DictionarySerializer(data=jadic_data)
+        if jadic_serializer.is_valid():
+            jadic_serializer.save()
+            return JsonResponse(jadic_serializer.data, status=status.HTTP_201_CREATED) 
+        return JsonResponse(jadic_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # function delete all list of ja-dictionary
+    elif request.method == 'DELETE':
+        count = Ja_Dictionary.objects.all().delete()
+        return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
+
+# function search by vi to ja
+@api_view(['GET', 'POST', 'DELETE'])
+def jadictionary_search(request):
+    if request.method == 'GET':
+        title_name=request.GET['ja_text']
+        # if title_name is not None:
+        #     return JsonResponse(Error("please enter key search"), status=status.HTTP_400_BAD_REQUEST)
+
+        jadictionarys = Ja_Dictionary.objects.raw("SELECT id, hiragana_text, vi_text FROM dsvn_dictionary_ja_dictionary WHERE (hiragana_text=%s OR kanji_text=%s OR katakana_text=%s)",[title_name, title_name, title_name])
+        ja_serializer = Ja_DictionarySerializer(jadictionarys, many=True)
+        
+        return JsonResponse(ja_serializer.data, safe=False)
+
+# function update vi-dic by id
+@api_view(['GET', 'PUT'])
+def jadictionary_update(request, pk):
+
+    try: 
+        jadic_data = Ja_Dictionary.objects.get(id=pk) 
+    except Ja_Dictionary.DoesNotExist: 
+        return JsonResponse({'message': 'The ja dictionary does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+ 
+    if request.method == 'PUT': 
+        ja_data = JSONParser().parse(request) 
+        jadic_serializer = Ja_DictionarySerializer(jadic_data, data=ja_data) 
+        if jadic_serializer.is_valid(): 
+            jadic_serializer.save() 
+            return JsonResponse(jadic_serializer.data) 
+        return JsonResponse(jadic_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
+# function delete ja-dic by id
+@api_view(['GET', 'POST', 'DELETE'])
+def jadictionary_delete(request, pk):
+
+    try: 
+        ja_dic = Ja_Dictionary.objects.get(pk=pk) 
+    except Ja_Dictionary.DoesNotExist: 
+        return JsonResponse({'message': 'The ja dictionary does not exist'}, status=status.HTTP_404_NOT_FOUND) 
+
+    if request.method == 'DELETE': 
+        ja_dic.delete() 
+        return JsonResponse({'message': 'The row ja dictionary was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)    
