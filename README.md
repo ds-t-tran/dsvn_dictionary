@@ -1,7 +1,7 @@
 # dsvn_dictionary
 - if not install lib mysql:
 run command: 
-pip install pymysql
+1.pip install pymysql
 
 - after open settings.py and change declaration of DATABASES:
 DATABASES = {
@@ -15,19 +15,19 @@ DATABASES = {
     }
 }
 - install the django-cors-headers library:
-pip install django-cors-headers
+1.pip install django-cors-headers
 
 - run command:
-python manage.py makemigrations 
-python manage.py migrate
+1.python manage.py makemigrations 
+2.python manage.py migrate
 
 - authentication jwt in django:
-pip install djangorestframework-simplejwt
+1.pip install djangorestframework-simplejwt
 
 - create superuser:
-python manage.py createsuperuser
+1.python manage.py createsuperuser
 
 - Google API Speech-to-Text:
-pip install SpeechRecognition
-pip install pipwin
-pipwin install pyaudio
+1.pip install SpeechRecognition
+2.pip install pipwin
+3.pipwin install pyaudio
