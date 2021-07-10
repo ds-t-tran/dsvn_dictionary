@@ -20,3 +20,14 @@ pip install django-cors-headers
 - run command:
 python manage.py makemigrations 
 python manage.py migrate
+
+- authentication jwt in django:
+pip install djangorestframework-simplejwt
+
+- create superuser:
+python manage.py createsuperuser
+
+- Google API Speech-to-Text:
+pip install SpeechRecognition
+pip install pipwin
+pipwin install pyaudio
