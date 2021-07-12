@@ -1,5 +1,12 @@
 from django.conf.urls import url 
 from dsvn_dictionary import views 
+from django.urls import path
+from .views import UserRegisterView, UserLoginView, SpeechGooleView
+ 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 urlpatterns = [ 
     # http://127.0.0.1:8000/api/vidictionary :get list vi-dic all or add new word or delete all 
@@ -19,6 +26,13 @@ urlpatterns = [
     # http://127.0.0.1:8000/api/delete/jadictionary/2 : delete row by id
     url(r'^api/delete/jadictionary/(?P<pk>[0-9]+)$', views.jadictionary_delete),
 
+    # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    path('admin/register', UserRegisterView.as_view(), name='register'),
+    path('admin/login', UserLoginView.as_view(), name='login'),
+
+    path('api/speech', SpeechGooleView.as_view(), name='info'),
     # function common not using
     # url(r'^api/tutorials$', views.tutorial_list),
     # url(r'^api/tutorials/(?P<pk>[0-9]+)$', views.tutorial_detail),
