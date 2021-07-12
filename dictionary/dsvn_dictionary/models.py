@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
@@ -43,3 +44,21 @@ class Ja_Dictionary(models.Model):
 
     class Meta:
         db_table = 'dsvn_dictionary_ja_dictionary'
+
+class User(AbstractUser):
+    # Delete not use field
+    username = models.CharField(max_length=200, blank=True, default='')
+    last_login = models.CharField(max_length=200, blank=True, default='')
+    is_staff = models.CharField(max_length=200, blank=True, default='')
+    is_superuser = models.CharField(max_length=200, blank=True, default='')
+
+    password = models.CharField(max_length=100)
+    email = models.EmailField(max_length=100, unique=True)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return self.email
+
+    class Meta:
+        db_table = 'auth_user'

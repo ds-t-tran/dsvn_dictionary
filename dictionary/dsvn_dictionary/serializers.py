@@ -1,6 +1,6 @@
 from django.db import models
 from rest_framework import serializers 
-from dsvn_dictionary.models import DsvnDictionary, Vi_Dictionary, Ja_Dictionary
+from dsvn_dictionary.models import DsvnDictionary, Vi_Dictionary, Ja_Dictionary, User
 
 class Vi_DictionarySerializer(serializers.ModelSerializer):
     
@@ -23,8 +23,12 @@ class DsvnDictionarySerializer(serializers.ModelSerializer):
                   'description',
                   'published')
                   
-class Vi_DictionarySerializer(serializers.ModelSerializer):
-    
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Vi_Dictionary
-        fields = "__all__"
+        model = User
+        fields = ['email', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True)

@@ -1,5 +1,7 @@
 from django.conf.urls import url 
 from dsvn_dictionary import views 
+from django.urls import path
+from .views import UserRegisterView, UserLoginView, SpeechGooleView
 
 urlpatterns = [ 
     # http://127.0.0.1:8000/api/vidictionary :get list vi-dic all or add new word or delete all 
@@ -18,4 +20,9 @@ urlpatterns = [
     url(r'^api/update/jadictionary/(?P<pk>[0-9]+)$', views.jadictionary_update),
     # http://127.0.0.1:8000/api/delete/jadictionary/2 : delete row by id
     url(r'^api/delete/jadictionary/(?P<pk>[0-9]+)$', views.jadictionary_delete),
+
+    path('admin/register', UserRegisterView.as_view(), name='register'),
+    path('admin/login', UserLoginView.as_view(), name='login'),
+
+    path('api/speech', SpeechGooleView.as_view(), name='info'),
 ]

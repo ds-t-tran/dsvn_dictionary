@@ -1,19 +1,94 @@
 from copy import Error
 from django.shortcuts import render
-
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
- 
 from dsvn_dictionary.models import DsvnDictionary, Vi_Dictionary, Ja_Dictionary
 from dsvn_dictionary.serializers import DsvnDictionarySerializer
-from dsvn_dictionary.serializers import Vi_DictionarySerializer, Ja_DictionarySerializer
-from rest_framework.decorators import api_view
+from dsvn_dictionary.serializers import Vi_DictionarySerializer, Ja_DictionarySerializer, UserSerializer, UserLoginSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.views import APIView
+from django.contrib.auth.hashers import make_password
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth import authenticate
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
+import speech_recognition as sr
 
+# class register user
+@permission_classes([AllowAny])
+class UserRegisterView(APIView):
+    
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
+            serializer.save()
+
+            return JsonResponse({
+                'message': 'Register successful!'
+            }, status=status.HTTP_201_CREATED)
+
+        else:
+            return JsonResponse({
+                'error_message': 'This email has already exist!',
+                'errors_code': 400,
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+# class check login
+@permission_classes([AllowAny])
+class UserLoginView(APIView):
+    def post(self, request):
+        serializer = UserLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            user = authenticate(
+                request,
+                username=serializer.validated_data['email'],
+                password=serializer.validated_data['password']
+            )
+            if user:
+                refresh = TokenObtainPairSerializer.get_token(user)
+                data = {
+                    'refresh_token': str(refresh),
+                    'access_token': str(refresh.access_token)
+                }
+                return Response(data, status=status.HTTP_200_OK)
+
+            return Response({
+                'error_message': 'Email or password is incorrect!',
+                'error_code': 400
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({
+            'error_messages': serializer.errors,
+            'error_code': 400
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+@permission_classes([AllowAny])
+class SpeechGooleView(APIView):
+    def post(self, request):
+        r = sr.Recognizer()
+        with sr.Microphone() as source:
+            print("Speak Anything :")
+            audio = r.listen(source)
+            text = ''
+            try:
+                text = r.recognize_google(audio)
+                # print("You said : {}".format(text))
+            except:
+                # print("Sorry could not recognize what you said")
+                JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_400_BAD_REQUEST)
+                # JsonResponse({'message': 'Sorry could not recognize what you said'}, status=status.HTTP_204_NO_CONTENT)
+            if text == '':
+                return JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_200_OK)
+            else:
+                return JsonResponse({'message': format(text)}, status=status.HTTP_200_OK)
+
+# working list all in vidic
+@permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST', 'DELETE'])
 def vidictionary_list(request):
 
-    # permissions = (permissions.AllowAny)
     # function get all list of vi-dictionary
     if request.method == 'GET':
         tutorials = Vi_Dictionary.objects.all()
@@ -41,6 +116,7 @@ def vidictionary_list(request):
         return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
 
 # function search by vi to ja
+@permission_classes([AllowAny])
 @api_view(['GET', 'POST', 'DELETE'])
 def vidictionary_search(request):
     if request.method == 'GET':
@@ -54,6 +130,7 @@ def vidictionary_search(request):
         return JsonResponse(tutorials_serializer.data, safe=False)
 
 # function update vi-dic by id
+@permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST', 'DELETE', 'PUT'])
 def vidictionary_update(request, pk):
 
@@ -71,6 +148,7 @@ def vidictionary_update(request, pk):
         return JsonResponse(tutorial_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
 # function delete vi-dic by id
+@permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST', 'DELETE'])
 def vidictionary_delete(request, pk):
 
@@ -88,7 +166,8 @@ def vidictionary_delete(request, pk):
     #     Vi_Dictionary.objects.filter(vi_text = title_name).delete()
     #     return JsonResponse({'message': 'Tutorials were deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
 
-
+# working list all in jadic
+@permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST', 'DELETE'])
 def jadictionary_list(request):
 
@@ -119,6 +198,7 @@ def jadictionary_list(request):
         return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
 
 # function search by ja to vi
+@permission_classes([AllowAny])
 @api_view(['GET', 'POST', 'DELETE'])
 def jadictionary_search(request):
     if request.method == 'GET':
@@ -132,6 +212,7 @@ def jadictionary_search(request):
         return JsonResponse(ja_serializer.data, safe=False)
 
 # function update ja-dic by id
+@permission_classes([IsAuthenticated])
 @api_view(['GET', 'PUT'])
 def jadictionary_update(request, pk):
 
@@ -149,6 +230,7 @@ def jadictionary_update(request, pk):
         return JsonResponse(jadic_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
 # function delete ja-dic by id
+@permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST', 'DELETE'])
 def jadictionary_delete(request, pk):
 
