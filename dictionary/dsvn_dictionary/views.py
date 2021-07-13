@@ -78,7 +78,6 @@ class ViSpeechGooleView(APIView):
             except:
                 # print("Sorry could not recognize what you said")
                 JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_400_BAD_REQUEST)
-                # JsonResponse({'message': 'Sorry could not recognize what you said'}, status=status.HTTP_204_NO_CONTENT)
             if text == '':
                 return JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_200_OK)
             else:
@@ -99,7 +98,6 @@ class JaSpeechGooleView(APIView):
             except:
                 # print("Sorry could not recognize what you said")
                 JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_400_BAD_REQUEST)
-                # JsonResponse({'message': 'Sorry could not recognize what you said'}, status=status.HTTP_204_NO_CONTENT)
             if text == '':
                 return JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_200_OK)
             else:
