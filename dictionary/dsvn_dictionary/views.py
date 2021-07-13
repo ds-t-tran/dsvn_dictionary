@@ -25,7 +25,7 @@ class UserRegisterView(APIView):
             serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
             serializer.save()
             return JsonResponse({
-                'message': 'Register email %r successful!' %email_register
+                'message': 'Email %r register successful!' %email_register
             }, status=status.HTTP_201_CREATED)
 
         else:
@@ -139,8 +139,6 @@ def vidictionary_list(request):
 def vidictionary_search(request):
     if request.method == 'GET':
         title_name=request.GET['vi_text']
-        # if title_name is not None:
-        #     return JsonResponse(Error("please enter key search"), status=status.HTTP_400_BAD_REQUEST)
 
         tutorials = Vi_Dictionary.objects.raw("SELECT id, vi_text FROM dsvn_dictionary_vi_dictionary WHERE vi_text=%s",[title_name])
         tutorials_serializer = Vi_DictionarySerializer(tutorials, many=True)
@@ -220,8 +218,6 @@ def jadictionary_list(request):
 def jadictionary_search(request):
     if request.method == 'GET':
         title_name=request.GET['ja_text']
-        # if title_name is not None:
-        #     return JsonResponse(Error("please enter key search"), status=status.HTTP_400_BAD_REQUEST)
 
         jadictionarys = Ja_Dictionary.objects.raw("SELECT id, hiragana_text, vi_text FROM dsvn_dictionary_ja_dictionary WHERE (hiragana_text=%s OR kanji_text=%s OR katakana_text=%s)",[title_name, title_name, title_name])
         ja_serializer = Ja_DictionarySerializer(jadictionarys, many=True)
