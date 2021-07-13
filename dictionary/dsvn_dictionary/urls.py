@@ -1,7 +1,7 @@
 from django.conf.urls import url 
 from dsvn_dictionary import views 
 from django.urls import path
-from .views import UserRegisterView, UserLoginView, SpeechGooleView
+from .views import UserRegisterView, UserLoginView, ViSpeechGooleView, JaSpeechGooleView
 
 urlpatterns = [ 
     # http://127.0.0.1:8000/api/vidictionary :get list vi-dic all or add new word or delete all 
@@ -24,5 +24,6 @@ urlpatterns = [
     path('admin/register', UserRegisterView.as_view(), name='register'),
     path('admin/login', UserLoginView.as_view(), name='login'),
 
-    path('api/speech', SpeechGooleView.as_view(), name='info'),
+    path('api/vi/speech', ViSpeechGooleView.as_view(), name='info'),
+    path('api/ja/speech', JaSpeechGooleView.as_view(), name='info'),
 ]

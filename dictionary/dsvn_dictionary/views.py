@@ -1,8 +1,7 @@
-from copy import Error
 from django.shortcuts import render
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
-from rest_framework import status
+from rest_framework import serializers, status
 from dsvn_dictionary.models import DsvnDictionary, Vi_Dictionary, Ja_Dictionary
 from dsvn_dictionary.serializers import DsvnDictionarySerializer
 from dsvn_dictionary.serializers import Vi_DictionarySerializer, Ja_DictionarySerializer, UserSerializer, UserLoginSerializer
@@ -21,17 +20,17 @@ class UserRegisterView(APIView):
     
     def post(self, request):
         serializer = UserSerializer(data=request.data)
+        email_register = request.data['email']
         if serializer.is_valid():
             serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
             serializer.save()
-
             return JsonResponse({
-                'message': 'Register successful!'
+                'message': 'Register email %r successful!' %email_register
             }, status=status.HTTP_201_CREATED)
 
         else:
             return JsonResponse({
-                'error_message': 'This email has already exist!',
+                'error_message': 'This email %r has already exist!' %email_register,
                 'errors_code': 400,
             }, status=status.HTTP_400_BAD_REQUEST)
 
@@ -64,8 +63,9 @@ class UserLoginView(APIView):
             'error_code': 400
         }, status=status.HTTP_400_BAD_REQUEST)
 
+# google speech voice vietnamese to text
 @permission_classes([AllowAny])
-class SpeechGooleView(APIView):
+class ViSpeechGooleView(APIView):
     def post(self, request):
         r = sr.Recognizer()
         with sr.Microphone() as source:
@@ -73,7 +73,28 @@ class SpeechGooleView(APIView):
             audio = r.listen(source)
             text = ''
             try:
-                text = r.recognize_google(audio)
+                text = r.recognize_google(audio, language='vi-VN')
+                # print("You said : {}".format(text))
+            except:
+                # print("Sorry could not recognize what you said")
+                JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_400_BAD_REQUEST)
+                # JsonResponse({'message': 'Sorry could not recognize what you said'}, status=status.HTTP_204_NO_CONTENT)
+            if text == '':
+                return JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_200_OK)
+            else:
+                return JsonResponse({'message': format(text)}, status=status.HTTP_200_OK)
+
+# google speech voice japanese to text
+@permission_classes([AllowAny])
+class JaSpeechGooleView(APIView):
+    def post(self, request):
+        r = sr.Recognizer()
+        with sr.Microphone() as source:
+            print("Speak Anything :")
+            audio = r.listen(source)
+            text = ''
+            try:
+                text = r.recognize_google(audio, language='ja-JA')
                 # print("You said : {}".format(text))
             except:
                 # print("Sorry could not recognize what you said")
@@ -99,7 +120,6 @@ def vidictionary_list(request):
         
         tutorials_serializer = Vi_DictionarySerializer(tutorials, many=True)
         return JsonResponse(tutorials_serializer.data, safe=False)
-        # 'safe=False' for objects serialization
  
     # function add to vi-dictionary
     elif request.method == 'POST':
@@ -181,7 +201,6 @@ def jadictionary_list(request):
         
         ja_serializer = Ja_DictionarySerializer(ja_dic, many=True)
         return JsonResponse(ja_serializer.data, safe=False)
-        # 'safe=False' for objects serialization
  
     # function add to ja-dictionary
     elif request.method == 'POST':
