@@ -17,10 +17,6 @@ DATABASES = {
 - install the django-cors-headers library:
 1.pip install django-cors-headers
 
-- run command:
-1.python manage.py makemigrations 
-2.python manage.py migrate
-
 - authentication jwt in django:
 1.pip install djangorestframework-simplejwt
 
@@ -31,3 +27,7 @@ DATABASES = {
 1.pip install SpeechRecognition
 2.pip install pipwin
 3.pipwin install pyaudio
+
+- run command:
+1.python manage.py makemigrations 
+2.python manage.py migrate
