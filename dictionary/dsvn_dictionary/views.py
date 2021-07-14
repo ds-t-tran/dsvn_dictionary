@@ -68,40 +68,44 @@ class UserLoginView(APIView):
 class ViSpeechGooleView(APIView):
     def post(self, request):
         r = sr.Recognizer()
-        with sr.Microphone() as source:
-            print("Speak Anything :")
-            audio = r.listen(source)
-            text = ''
-            try:
-                text = r.recognize_google(audio, language='vi-VN')
-                # print("You said : {}".format(text))
-            except:
-                # print("Sorry could not recognize what you said")
-                JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_400_BAD_REQUEST)
-            if text == '':
-                return JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_200_OK)
-            else:
-                return JsonResponse({'message': format(text)}, status=status.HTTP_200_OK)
+        try:
+            with sr.Microphone() as source:
+                print("Speak Anything :")
+                audio = r.listen(source)
+                text = ''
+                try:
+                    text = r.recognize_google(audio, language='vi-VN')
+                    print("You said : {}".format(text))
+                except:
+                    JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_400_BAD_REQUEST)
+                if text == '':
+                    return JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_200_OK)
+                else:
+                    return JsonResponse({'message': format(text)}, status=status.HTTP_200_OK)
+        except:
+            return JsonResponse({'message': "The device not support the voice speak"}, status=status.HTTP_400_BAD_REQUEST)
 
 # google speech voice japanese to text
 @permission_classes([AllowAny])
 class JaSpeechGooleView(APIView):
     def post(self, request):
         r = sr.Recognizer()
-        with sr.Microphone() as source:
-            print("Speak Anything :")
-            audio = r.listen(source)
-            text = ''
-            try:
-                text = r.recognize_google(audio, language='ja-JA')
-                # print("You said : {}".format(text))
-            except:
-                # print("Sorry could not recognize what you said")
-                JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_400_BAD_REQUEST)
-            if text == '':
-                return JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_200_OK)
-            else:
-                return JsonResponse({'message': format(text)}, status=status.HTTP_200_OK)
+        try:
+            with sr.Microphone() as source:
+                print("Speak Anything :")
+                audio = r.listen(source)
+                text = ''
+                try:
+                    text = r.recognize_google(audio, language='ja-JA')
+                    print("You said : {}".format(text))
+                except:
+                    JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_400_BAD_REQUEST)
+                if text == '':
+                    return JsonResponse({'message': "Sorry could not recognize what you said"}, status=status.HTTP_200_OK)
+                else:
+                    return JsonResponse({'message': format(text)}, status=status.HTTP_200_OK)
+        except:
+            return JsonResponse({'message': "The device not support the voice speak"}, status=status.HTTP_400_BAD_REQUEST)
 
 # working list all in vidic
 @permission_classes([IsAuthenticated])
