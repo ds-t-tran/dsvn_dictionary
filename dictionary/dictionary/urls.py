@@ -19,5 +19,5 @@ from django.urls.conf import path
 
 urlpatterns = [ 
     url(r'^', include('dsvn_dictionary.urls')),
-    path('admin/', include('dsvn_dictionary.urls')),    
+    path('admin/', include('dsvn_dictionary.urls')),   
 ]
