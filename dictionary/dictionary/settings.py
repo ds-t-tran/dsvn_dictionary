@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # CORS
     'corsheaders',
     'rest_framework_simplejwt',
+    'import_export',
 ]
 
 REST_FRAMEWORK = {

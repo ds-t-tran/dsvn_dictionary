@@ -1,3 +1,5 @@
+from django import db
+from django.db.models import query
 from django.shortcuts import render
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
@@ -13,6 +15,38 @@ from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 import speech_recognition as sr
+from django.db import connections
+import pandas as pd
+
+# class import excel file to database
+@permission_classes([AllowAny])
+class ImportExcelView(APIView):
+    def post(self, request):
+        path_file = r'F:\test.xlsx'
+        sheet_name = 'Sheet1'
+        df = pd.read_excel (path_file, sheet_name=sheet_name)
+        db_conn = connections['default']
+        try:
+            c = db_conn.cursor()
+            query = """INSERT INTO dsvn_dictionary_ja_dictionary (hiragana_text, kanji_text, katakana_text, vi_text, example, description, created_at, update_at) VALUES (%s, %s, %s, %s, %s, %s, now(), now())"""
+            
+            for r in range(0, len(df)):
+                hiragana_text = df.loc[r, 'hiragana_text']
+                kanji_text = df.loc[r, 'kanji_text']
+                katakana_text = df.loc[r, 'katakana_text']
+                vi_text = df.loc[r, 'vi_text']
+                example = df.loc[r, 'example']
+                description = df.loc[r, 'description']
+                
+                values = (hiragana_text, kanji_text, katakana_text, vi_text, example, description)
+                c.execute(query, values)
+                
+            c.close()
+            db_conn.commit()
+            db_conn.close()
+        except:
+            return Response('NOT OK', status=status.HTTP_400_BAD_REQUEST)    
+        return Response('OK', status=status.HTTP_200_OK)
 
 # class register user
 @permission_classes([AllowAny])
