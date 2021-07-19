@@ -9,9 +9,14 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+# define path and name file excel import
+PATH_FILE = os.path.join(BASE_DIR, 'test.xlsx')
+# define name of sheet import
+SHEET_NAME = 'Sheet1'
 
 
 # Quick-start development settings - unsuitable for production

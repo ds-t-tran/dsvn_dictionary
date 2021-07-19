@@ -17,19 +17,19 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 import speech_recognition as sr
 from django.db import connections
 import pandas as pd
+import os
+from dictionary.settings import PATH_FILE, SHEET_NAME
 
 # class import excel file to database
 @permission_classes([AllowAny])
 class ImportExcelView(APIView):
     def post(self, request):
-        path_file = r'F:\test.xlsx'
-        sheet_name = 'Sheet1'
-        df = pd.read_excel (path_file, sheet_name=sheet_name)
+        df = pd.read_excel (PATH_FILE, sheet_name=SHEET_NAME).fillna('')
         db_conn = connections['default']
         try:
             c = db_conn.cursor()
             query = """INSERT INTO dsvn_dictionary_ja_dictionary (hiragana_text, kanji_text, katakana_text, vi_text, example, description, created_at, update_at) VALUES (%s, %s, %s, %s, %s, %s, now(), now())"""
-            
+            hiragana_text, kanji_text, katakana_text, vi_text, example, description = '', '', '', '', '', ''
             for r in range(0, len(df)):
                 hiragana_text = df.loc[r, 'hiragana_text']
                 kanji_text = df.loc[r, 'kanji_text']
@@ -161,10 +161,12 @@ def vidictionary_list(request):
     elif request.method == 'POST':
         vidic_data = JSONParser().parse(request)
         vidic_serializer = Vi_DictionarySerializer(data=vidic_data)
+        
         if vidic_serializer.is_valid():
             vidic_serializer.save()
-            return JsonResponse(vidic_serializer.data, status=status.HTTP_201_CREATED) 
-        return JsonResponse(vidic_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(vidic_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse(vidic_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     # function delete all list of vi-dictionary
     elif request.method == 'DELETE':
