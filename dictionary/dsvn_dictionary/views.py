@@ -45,7 +45,7 @@ class ImportExcelView(APIView):
             db_conn.commit()
             db_conn.close()
         except:
-            return Response({'message':'File excel is not imported'}, status=status.HTTP_400_BAD_REQUEST)    
+            return JsonResponse({'message':'File excel is not imported'}, status=status.HTTP_400_BAD_REQUEST)    
         return JsonResponse({'message': 'File excel is import successfully!'}, status=status.HTTP_200_OK)
 
 # class register user
