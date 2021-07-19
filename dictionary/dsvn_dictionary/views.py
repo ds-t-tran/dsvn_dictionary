@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import serializers, status
-from dsvn_dictionary.models import DsvnDictionary, Vi_Dictionary, Ja_Dictionary
+from dsvn_dictionary.models import DsvnDictionary, User, Vi_Dictionary, Ja_Dictionary
 from dsvn_dictionary.serializers import DsvnDictionarySerializer
 from dsvn_dictionary.serializers import Vi_DictionarySerializer, Ja_DictionarySerializer, UserSerializer, UserLoginSerializer
 from rest_framework.decorators import api_view, permission_classes
@@ -17,19 +17,19 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 import speech_recognition as sr
 from django.db import connections
 import pandas as pd
+import os
+from dictionary.settings import PATH_FILE, SHEET_NAME
 
 # class import excel file to database
 @permission_classes([AllowAny])
 class ImportExcelView(APIView):
     def post(self, request):
-        path_file = r'F:\test.xlsx'
-        sheet_name = 'Sheet1'
-        df = pd.read_excel (path_file, sheet_name=sheet_name)
+        df = pd.read_excel (PATH_FILE, sheet_name=SHEET_NAME).fillna('')
         db_conn = connections['default']
         try:
             c = db_conn.cursor()
             query = """INSERT INTO dsvn_dictionary_ja_dictionary (hiragana_text, kanji_text, katakana_text, vi_text, example, description, created_at, update_at) VALUES (%s, %s, %s, %s, %s, %s, now(), now())"""
-            
+            hiragana_text, kanji_text, katakana_text, vi_text, example, description = '', '', '', '', '', ''
             for r in range(0, len(df)):
                 hiragana_text = df.loc[r, 'hiragana_text']
                 kanji_text = df.loc[r, 'kanji_text']
@@ -45,8 +45,8 @@ class ImportExcelView(APIView):
             db_conn.commit()
             db_conn.close()
         except:
-            return Response('NOT OK', status=status.HTTP_400_BAD_REQUEST)    
-        return Response('OK', status=status.HTTP_200_OK)
+            return Response({'message':'File excel is not imported'}, status=status.HTTP_400_BAD_REQUEST)    
+        return JsonResponse({'message': 'File excel is import successfully!'}, status=status.HTTP_200_OK)
 
 # class register user
 @permission_classes([AllowAny])
@@ -59,7 +59,7 @@ class UserRegisterView(APIView):
             serializer.validated_data['password'] = make_password(serializer.validated_data['password'])
             serializer.save()
             return JsonResponse({
-                'message': 'Email %r register successful!' %email_register
+                'message': 'Email %r register successfully!' %email_register
             }, status=status.HTTP_201_CREATED)
 
         else:
@@ -161,11 +161,15 @@ def vidictionary_list(request):
     elif request.method == 'POST':
         vidic_data = JSONParser().parse(request)
         vidic_serializer = Vi_DictionarySerializer(data=vidic_data)
-        if vidic_serializer.is_valid():
-            vidic_serializer.save()
-            return JsonResponse(vidic_serializer.data, status=status.HTTP_201_CREATED) 
-        return JsonResponse(vidic_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+        if Vi_Dictionary.objects.filter(vi_text=vidic_serializer.initial_data['vi_text']).exists():
+            return JsonResponse({'message': 'The vi_text to insert is exist in database'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if vidic_serializer.is_valid():
+                vidic_serializer.save()
+                return JsonResponse(vidic_serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return JsonResponse(vidic_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                
     # function delete all list of vi-dictionary
     elif request.method == 'DELETE':
         count = Vi_Dictionary.objects.all().delete()
