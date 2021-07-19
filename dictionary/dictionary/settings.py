@@ -14,7 +14,7 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 # define path and name file excel import
-PATH_FILE = os.path.join(BASE_DIR, 'test.xlsx')
+PATH_FILE = os.path.join(BASE_DIR, 'import_ja_text.xlsx')
 # define name of sheet import
 SHEET_NAME = 'Sheet1'
 
