@@ -1,0 +1,22 @@
+py==1.8.1
+pip==19.0.3
+pytest==3.2.5
+
+#mysql
+pymysql==1.0.2
+
+# RESTful API and API documentation
+djangorestframework>=3.2,<4.0
+djangorestframework-simplejwt
+
+# django-cors-headers
+django-cors-headers==1.1.0
+
+# # Google API Speech-to-Text
+# SpeechRecognition
+# pipwin
+# pyaudio
+
+
+
+

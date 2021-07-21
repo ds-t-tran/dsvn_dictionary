@@ -89,11 +89,11 @@ WSGI_APPLICATION = 'dictionary.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dictionary_db',
+        'NAME': 'dsvn_dictionary',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': '123456',
         'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'PORT': '3305',
     }
 }
 
