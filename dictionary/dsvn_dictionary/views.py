@@ -18,13 +18,13 @@ import speech_recognition as sr
 from django.db import connections
 import pandas as pd
 import os
-from dictionary.settings import PATH_FILE, SHEET_NAME, TABLE_NAME
+from dsvn_dictionary.variable_global import FILE_NAME, SHEET_NAME, TABLE_NAME
 
 # class import excel file to database
 @permission_classes([AllowAny])
 class ImportExcelView(APIView):
     def post(self, request):
-        df = pd.read_excel (PATH_FILE, sheet_name=SHEET_NAME).fillna('')
+        df = pd.read_excel (FILE_NAME, sheet_name=SHEET_NAME).fillna('')
         db_conn = connections['default']
         try:
             c = db_conn.cursor()
