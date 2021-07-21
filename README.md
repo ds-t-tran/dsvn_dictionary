@@ -20,6 +20,9 @@ DATABASES = {
 - authentication jwt in django:
 1.pip install djangorestframework-simplejwt
 
+- import or export file excel
+1. pip install django-import_export
+
 - create superuser:
 1.python manage.py createsuperuser
 
