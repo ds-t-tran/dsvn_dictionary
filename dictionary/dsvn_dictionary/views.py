@@ -18,17 +18,17 @@ import speech_recognition as sr
 from django.db import connections
 import pandas as pd
 import os
-from dictionary.settings import PATH_FILE, SHEET_NAME
+from dsvn_dictionary.variable_global import FILE_NAME, SHEET_NAME, TABLE_NAME
 
 # class import excel file to database
 @permission_classes([AllowAny])
 class ImportExcelView(APIView):
     def post(self, request):
-        df = pd.read_excel (PATH_FILE, sheet_name=SHEET_NAME).fillna('')
+        df = pd.read_excel (FILE_NAME, sheet_name=SHEET_NAME).fillna('')
         db_conn = connections['default']
         try:
             c = db_conn.cursor()
-            query = """INSERT INTO dsvn_dictionary_ja_dictionary (hiragana_text, kanji_text, katakana_text, vi_text, example, description, created_at, update_at) VALUES (%s, %s, %s, %s, %s, %s, now(), now())"""
+            query = """INSERT INTO {} (hiragana_text, kanji_text, katakana_text, vi_text, example, description, created_at, update_at) VALUES (%s, %s, %s, %s, %s, %s, now(), now())""".format(TABLE_NAME)
             hiragana_text, kanji_text, katakana_text, vi_text, example, description = '', '', '', '', '', ''
             for r in range(0, len(df)):
                 hiragana_text = df.loc[r, 'hiragana_text']
