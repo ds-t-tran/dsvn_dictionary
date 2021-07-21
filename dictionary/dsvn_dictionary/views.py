@@ -37,6 +37,13 @@ class ImportExcelView(APIView):
                 vi_text = df.loc[r, 'vi_text']
                 example = df.loc[r, 'example']
                 description = df.loc[r, 'description']
+
+                # when vietnamese translate is null, skip row
+                if vi_text == '':
+                    continue
+                # when column hiragana_text and katakana_text and kanji_text is null, skip row
+                if hiragana_text == '' and katakana_text == '' and kanji_text == '':
+                    continue
                 
                 values = (hiragana_text, kanji_text, katakana_text, vi_text, example, description)
                 c.execute(query, values)
