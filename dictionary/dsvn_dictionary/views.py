@@ -253,7 +253,7 @@ def jadictionary_list(request):
         jadic_serializer = Ja_DictionarySerializer(data=jadic_data)
         if jadic_serializer.is_valid():
             jadic_serializer.save()
-            return JsonResponse(jadic_serializer.data, status=status.HTTP_201_CREATED) 
+            return JsonResponse({'message': 'The vi_text insert successfully!'}, status=status.HTTP_201_CREATED)
         return JsonResponse(jadic_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     # function delete all list of ja-dictionary
