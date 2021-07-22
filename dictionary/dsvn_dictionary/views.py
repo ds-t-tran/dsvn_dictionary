@@ -173,7 +173,7 @@ def vidictionary_list(request):
         else:
             if vidic_serializer.is_valid():
                 vidic_serializer.save()
-                return JsonResponse(vidic_serializer.data, status=status.HTTP_201_CREATED)
+                return JsonResponse({'message': 'The vi_text insert successfully!'}, status=status.HTTP_201_CREATED)
             else:
                 return JsonResponse(vidic_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 
@@ -209,7 +209,7 @@ def vidictionary_update(request, pk):
         tutorial_serializer = Vi_DictionarySerializer(tutorial, data=tutorial_data) 
         if tutorial_serializer.is_valid(): 
             tutorial_serializer.save() 
-            return JsonResponse(tutorial_serializer.data) 
+            return JsonResponse({'message': 'The record was updated successfully!'}, status=status.HTTP_202_ACCEPTED) 
         return JsonResponse(tutorial_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
 # function delete vi-dic by id
@@ -224,7 +224,7 @@ def vidictionary_delete(request, pk):
 
     if request.method == 'DELETE': 
         vi_dic.delete() 
-        return JsonResponse({'message': 'Tutorial was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)    
+        return JsonResponse({'message': 'The vi dictionary was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)    
 
     # if request.method == 'DELETE':
     #     title_name = request.GET['vi_text']
@@ -288,7 +288,7 @@ def jadictionary_update(request, pk):
         jadic_serializer = Ja_DictionarySerializer(jadic_data, data=ja_data) 
         if jadic_serializer.is_valid(): 
             jadic_serializer.save() 
-            return JsonResponse(jadic_serializer.data) 
+            return JsonResponse({'message': 'The record was updated successfully!'}, status=status.HTTP_202_ACCEPTED) 
         return JsonResponse(jadic_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
 # function delete ja-dic by id
