@@ -31,6 +31,9 @@ DATABASES = {
 2.pip install pipwin
 3.pipwin install pyaudio
 
+- Google translate api:
+1. pip install googletrans==3.1.0a0
+
 - run command:
 1.python manage.py makemigrations 
 2.python manage.py migrate
