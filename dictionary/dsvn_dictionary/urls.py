@@ -1,7 +1,7 @@
 from django.conf.urls import url 
 from dsvn_dictionary import views 
 from django.urls import path
-from .views import UserRegisterView, UserLoginView, ViSpeechGooleView, JaSpeechGooleView, ImportExcelView
+from .views import UserRegisterView, UserLoginView, ViSpeechGooleView, JaSpeechGooleView, ImportExcelView, GoogleTranslateView
 
 urlpatterns = [ 
     # http://127.0.0.1:8000/api/vidictionary :get list vi-dic all or add new word or delete all 
@@ -42,4 +42,7 @@ urlpatterns = [
 
     # http://127.0.0.1:8000/api/importexcel: speech google api japanese to text
     path('api/importexcel', ImportExcelView.as_view(), name='import'),
+
+    # http://127.0.0.1:8000/api/googletranslate: translate string with google api
+    path('api/googletranslate', GoogleTranslateView.as_view(), name='translate'),
 ]

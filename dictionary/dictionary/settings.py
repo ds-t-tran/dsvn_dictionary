@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # CORS
     'corsheaders',
     'rest_framework_simplejwt',
+    # import or export file excel
     'import_export',
 ]
 
