@@ -1,3 +1,8 @@
+import speech_recognition as sr
+import pandas as pd
+import os
+
+from googletrans import Translator
 from django import db
 from django.db.models import query
 from django.shortcuts import render
@@ -14,11 +19,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
-import speech_recognition as sr
+from dsvn_dictionary.variable_global import FILE_NAME, SHEET_NAME, TABLE_NAME, VIETNAMESE, JAPANESE
 from django.db import connections
-import pandas as pd
-import os
-from dsvn_dictionary.variable_global import FILE_NAME, SHEET_NAME, TABLE_NAME
 
 # class import excel file to database
 @permission_classes([AllowAny])
@@ -305,6 +307,24 @@ def jadictionary_delete(request, pk):
         ja_dic.delete() 
         return JsonResponse({'message': 'The row ja dictionary was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)  
 
+# class translate string with google api
+@permission_classes([AllowAny])
+class GoogleTranslateView(APIView):
+    def post(self, request):
+        LANGUAGE_INPUT = JAPANESE
+        LANGUAGE_OUTPUT = VIETNAMESE
+        
+        translator = Translator()
+        message = request.GET["message"]
+        language_input = translator.detect(message)
+
+        if language_input.lang == 'vi':
+            LANGUAGE_INPUT = VIETNAMESE
+            LANGUAGE_OUTPUT = JAPANESE
+        jatranslated = translator.translate(message, src=LANGUAGE_INPUT, dest=LANGUAGE_OUTPUT)
+        
+        return JsonResponse({'message': jatranslated.text}, status=status.HTTP_201_CREATED) 
+        
 # function common not using
 # @api_view(['GET', 'POST', 'DELETE'])
 # def tutorial_list(request):
