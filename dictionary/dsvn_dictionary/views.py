@@ -19,7 +19,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
-from dsvn_dictionary.variable_global import FILE_NAME, SHEET_NAME, TABLE_NAME, VIETNAMESE, JAPANESE
+from dsvn_dictionary.variable_global import *
 from django.db import connections
 
 # class import excel file to database
@@ -313,17 +313,36 @@ class GoogleTranslateView(APIView):
     def post(self, request):
         LANGUAGE_INPUT = JAPANESE
         LANGUAGE_OUTPUT = VIETNAMESE
-        
+
         translator = Translator()
         message = request.GET["message"]
         language_input = translator.detect(message)
 
-        if language_input.lang == 'vi':
+        if language_input.lang == VIETNAMESE:
             LANGUAGE_INPUT = VIETNAMESE
             LANGUAGE_OUTPUT = JAPANESE
         jatranslated = translator.translate(message, src=LANGUAGE_INPUT, dest=LANGUAGE_OUTPUT)
         
         return JsonResponse({'message': jatranslated.text}, status=status.HTTP_201_CREATED) 
+
+# class translate file import
+@permission_classes([AllowAny])
+class TranslateFileView(APIView):
+    def post(self, request):
+        translator = Translator()
+        
+        try:
+            f = open(FILE_IMPORT, READ_FILE, encoding=UTF8)
+            if f.mode == READ_FILE:
+                contents = f.read()
+                result = translator.translate(contents, dest=VIETNAMESE)
+                # print text to console
+                print(result.text)
+                with open(FILE_EXPORT, WRITE_FILE, encoding=UTF8) as f:
+                    f.write(result.text)
+            return JsonResponse({'message': "File import translate successfully!"}, status=status.HTTP_201_CREATED) 
+        except:
+            return JsonResponse({'message': "Can not find file import"}, status=status.HTTP_404_NOT_FOUND) 
         
 # function common not using
 # @api_view(['GET', 'POST', 'DELETE'])
