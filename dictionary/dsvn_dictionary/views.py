@@ -190,8 +190,10 @@ def vidictionary_list(request):
 def vidictionary_search(request):
     if request.method == 'GET':
         title_name=request.GET['vi_text']
+        title_name_replace = title_name.replace("%20", " ")
+        search_title = '%' + title_name_replace + '%'
 
-        tutorials = Vi_Dictionary.objects.raw("SELECT id, vi_text FROM dsvn_dictionary_vi_dictionary WHERE vi_text=%s",[title_name])
+        tutorials = Vi_Dictionary.objects.raw("SELECT id, vi_text FROM dsvn_dictionary_vi_dictionary WHERE vi_text LIKE %s" ,[search_title])
         tutorials_serializer = Vi_DictionarySerializer(tutorials, many=True)
         
         return JsonResponse(tutorials_serializer.data, safe=False)
