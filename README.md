@@ -35,5 +35,19 @@ DATABASES = {
 1. pip install googletrans==3.1.0a0
 
 - run command:
+python manage.py makemigrations 
+python manage.py migrate
+
+- authentication jwt in django:
+pip install djangorestframework-simplejwt
+
+- create superuser:
+python manage.py createsuperuser
+
+- Google API Speech-to-Text:
+pip install SpeechRecognition
+pip install pipwin
+pipwin install pyaudio
+
 1.python manage.py makemigrations 
 2.python manage.py migrate
