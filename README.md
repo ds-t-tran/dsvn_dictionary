@@ -34,20 +34,10 @@ DATABASES = {
 - Google translate api:
 1. pip install googletrans==3.1.0a0
 
-- run command:
-python manage.py makemigrations 
-python manage.py migrate
+- install pandas:
+1. pip install wheel
+2. pip install pandas
 
-- authentication jwt in django:
-pip install djangorestframework-simplejwt
-
-- create superuser:
-python manage.py createsuperuser
-
-- Google API Speech-to-Text:
-pip install SpeechRecognition
-pip install pipwin
-pipwin install pyaudio
-
+- update and create database:
 1.python manage.py makemigrations 
 2.python manage.py migrate
