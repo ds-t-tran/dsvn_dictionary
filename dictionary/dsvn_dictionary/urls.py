@@ -1,14 +1,14 @@
 from django.conf.urls import url 
 from dsvn_dictionary import views 
 from django.urls import path
-from .views import UserRegisterView, UserLoginView, ViSpeechGooleView, JaSpeechGooleView, ImportExcelView, GoogleTranslateView, TranslateFileView
+from .views import UserRegisterView, UserLoginView, ViSpeechGooleView, JaSpeechGooleView, ImportExcelView, GoogleTranslateView, TranslateFileView, ViSearchView, JaSearchView
 
 urlpatterns = [ 
     # http://127.0.0.1:8000/api/vidictionary :get list vi-dic all or add new word or delete all 
     url(r'^api/vidictionary$', views.vidictionary_list),
 
     # http://127.0.0.1:8000/api/search/vidictionary?vi_text=giao vien : search by viet name word to japan word
-    url(r'^api/search/vidictionary$', views.vidictionary_search),
+    path('api/search/vidictionary', ViSearchView.as_view(), name='visearch'),
 
     # http://127.0.0.1:8000/api/update/jadictionary/$id: update row vi-dic by id
     url(r'^api/update/vidictionary/(?P<pk>[0-9]+)$', views.vidictionary_update),
@@ -20,7 +20,7 @@ urlpatterns = [
     url(r'^api/jadictionary$', views.jadictionary_list),
 
     # http://127.0.0.1:8000/api/search/jadictionary?ja_text=会議室 : search by japan word to viet nam word
-    url(r'^api/search/jadictionary$', views.jadictionary_search),
+    path('api/search/jadictionary', JaSearchView.as_view(), name='jasearch'),
 
     # http://127.0.0.1:8000/api/update/jadictionary/1 : update row ja-dic by id
     url(r'^api/update/jadictionary/(?P<pk>[0-9]+)$', views.jadictionary_update),
