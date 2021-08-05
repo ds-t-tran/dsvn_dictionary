@@ -39,5 +39,5 @@ DATABASES = {
 2. pip install pandas
 
 - update and create database:
-1.python manage.py makemigrations 
+1.python manage.py makemigrations dsvn_dictionary
 2.python manage.py migrate
