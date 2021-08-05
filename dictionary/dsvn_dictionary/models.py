@@ -45,7 +45,7 @@ class User(AbstractUser):
     password = models.CharField(max_length=100)
     email = models.EmailField(max_length=100, unique=True)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return self.email

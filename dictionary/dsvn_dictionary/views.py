@@ -58,7 +58,7 @@ class ImportExcelView(APIView):
         return JsonResponse({'message': 'File excel is import successfully!'}, status=status.HTTP_200_OK)
 
 # class register user
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 class UserRegisterView(APIView):
     
     def post(self, request):
@@ -184,19 +184,17 @@ def vidictionary_list(request):
         count = Vi_Dictionary.objects.all().delete()
         return JsonResponse({'message': '{} Tutorials were deleted successfully!'.format(count[0])}, status=status.HTTP_204_NO_CONTENT)
 
-# function search by vi to ja
+# # function search by vi to ja
 @permission_classes([AllowAny])
-@api_view(['GET', 'POST', 'DELETE'])
-def vidictionary_search(request):
-    if request.method == 'GET':
-        title_name=request.GET['vi_text']
-        title_name_replace = title_name.replace("%20", " ")
-        search_title = '%' + title_name_replace + '%'
+class ViSearchView(APIView):
+    def get(self, request):
+        title_name=request.GET['vi_text'].replace("%20", " ")
+        search_title = '%' + title_name + '%'
 
         tutorials = Vi_Dictionary.objects.raw("SELECT id, vi_text FROM dsvn_dictionary_vi_dictionary WHERE vi_text LIKE %s" ,[search_title])
         tutorials_serializer = Vi_DictionarySerializer(tutorials, many=True)
         
-        return JsonResponse(tutorials_serializer.data, safe=False)
+        return JsonResponse(tutorials_serializer.data, status=status.HTTP_200_OK, safe=False)
 
 # function update vi-dic by id
 @permission_classes([IsAuthenticated])
@@ -267,15 +265,15 @@ def jadictionary_list(request):
 
 # function search by ja to vi
 @permission_classes([AllowAny])
-@api_view(['GET', 'POST', 'DELETE'])
-def jadictionary_search(request):
-    if request.method == 'GET':
+class JaSearchView(APIView):
+    def get(self, request):
         title_name=request.GET['ja_text']
 
         jadictionarys = Ja_Dictionary.objects.raw("SELECT id, hiragana_text, vi_text FROM dsvn_dictionary_ja_dictionary WHERE (hiragana_text=%s OR kanji_text=%s OR katakana_text=%s)",[title_name, title_name, title_name])
         ja_serializer = Ja_DictionarySerializer(jadictionarys, many=True)
         
-        return JsonResponse(ja_serializer.data, safe=False)
+        return JsonResponse(ja_serializer.data, status=status.HTTP_200_OK, safe=False)
+
 
 # function update ja-dic by id
 @permission_classes([IsAuthenticated])
@@ -345,8 +343,33 @@ class TranslateFileView(APIView):
             return JsonResponse({'message': "File import translate successfully!"}, status=status.HTTP_201_CREATED) 
         except:
             return JsonResponse({'message': "Can not find file import"}, status=status.HTTP_404_NOT_FOUND) 
-        
+
 # function common not using
+
+# @permission_classes([AllowAny])
+# @api_view(['GET', 'POST', 'DELETE'])
+# def vidictionary_search(request):
+#     if request.method == 'GET':
+#         title_name=request.GET['vi_text']
+#         title_name_replace = title_name.replace("%20", " ")
+#         search_title = '%' + title_name_replace + '%'
+
+#         tutorials = Vi_Dictionary.objects.raw("SELECT id, vi_text FROM dsvn_dictionary_vi_dictionary WHERE vi_text LIKE %s" ,[search_title])
+#         tutorials_serializer = Vi_DictionarySerializer(tutorials, many=True)
+        
+#         return JsonResponse(tutorials_serializer.data, safe=False)
+
+# @permission_classes([AllowAny])
+# @api_view(['GET', 'POST', 'DELETE'])
+# def jadictionary_search(request):
+#     if request.method == 'GET':
+#         title_name=request.GET['ja_text']
+
+#         jadictionarys = Ja_Dictionary.objects.raw("SELECT id, hiragana_text, vi_text FROM dsvn_dictionary_ja_dictionary WHERE (hiragana_text=%s OR kanji_text=%s OR katakana_text=%s)",[title_name, title_name, title_name])
+#         ja_serializer = Ja_DictionarySerializer(jadictionarys, many=True)
+        
+#         return JsonResponse(ja_serializer.data, safe=False)
+
 # @api_view(['GET', 'POST', 'DELETE'])
 # def tutorial_list(request):
 #     if request.method == 'GET':
