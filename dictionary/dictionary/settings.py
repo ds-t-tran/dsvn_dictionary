@@ -77,9 +77,12 @@ MIDDLEWARE = [
 
 AUTH_USER_MODEL = "dsvn_dictionary.User" 
 
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:8081',
+    'http://localhost:8080',
+    'http://localhost:1234',
+    'http://127.0.0.1:8080',
 )
 
 ROOT_URLCONF = 'dictionary.urls'
