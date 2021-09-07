@@ -188,13 +188,16 @@ def vidictionary_list(request):
 @permission_classes([AllowAny])
 class ViSearchView(APIView):
     def get(self, request):
-        title_name=request.GET['vi_text'].replace("%20", " ")
-        search_title = '%' + title_name + '%'
+        try:
+            title_name=request.GET['vi_text'].replace("%20", " ")
+            search_title = '%' + title_name + '%'
 
-        tutorials = Vi_Dictionary.objects.raw("SELECT id, vi_text FROM dsvn_dictionary_vi_dictionary WHERE vi_text LIKE %s" ,[search_title])
-        tutorials_serializer = Vi_DictionarySerializer(tutorials, many=True)
-        
-        return JsonResponse(tutorials_serializer.data, status=status.HTTP_200_OK, safe=False)
+            tutorials = Vi_Dictionary.objects.raw("SELECT id, vi_text FROM dsvn_dictionary_vi_dictionary WHERE vi_text LIKE %s" ,[search_title])
+            tutorials_serializer = Vi_DictionarySerializer(tutorials, many=True)
+            
+            return JsonResponse(tutorials_serializer.data, status=status.HTTP_200_OK, safe=False)
+        except:
+            return JsonResponse({'message': 'Set param error or search not successfully. '}, status=status.HTTP_404_NOT_FOUND)
 
 # function update vi-dic by id
 @permission_classes([IsAuthenticated])
@@ -267,12 +270,15 @@ def jadictionary_list(request):
 @permission_classes([AllowAny])
 class JaSearchView(APIView):
     def get(self, request):
-        title_name=request.GET['ja_text']
+        try:
+            title_name=request.GET['ja_text']
 
-        jadictionarys = Ja_Dictionary.objects.raw("SELECT id, hiragana_text, vi_text FROM dsvn_dictionary_ja_dictionary WHERE (hiragana_text=%s OR kanji_text=%s OR katakana_text=%s)",[title_name, title_name, title_name])
-        ja_serializer = Ja_DictionarySerializer(jadictionarys, many=True)
+            jadictionarys = Ja_Dictionary.objects.raw("SELECT id, hiragana_text, vi_text FROM dsvn_dictionary_ja_dictionary WHERE (hiragana_text=%s OR kanji_text=%s OR katakana_text=%s)",[title_name, title_name, title_name])
+            ja_serializer = Ja_DictionarySerializer(jadictionarys, many=True)
         
-        return JsonResponse(ja_serializer.data, status=status.HTTP_200_OK, safe=False)
+            return JsonResponse(ja_serializer.data, status=status.HTTP_200_OK, safe=False)
+        except:
+            return JsonResponse({'message': 'Set param error or search not successfully. '}, status=status.HTTP_404_NOT_FOUND)
 
 
 # function update ja-dic by id
