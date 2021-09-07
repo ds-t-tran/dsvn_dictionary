@@ -329,6 +329,10 @@ class GoogleTranslateView(APIView):
 @permission_classes([AllowAny])
 class TranslateFileView(APIView):
     def post(self, request):
+
+        FILE_IMPORT = request.GET['FILE_IMPORT']
+        FILE_EXPORT = request.GET['FILE_EXPORT']
+
         translator = Translator()
         
         try:
